@@ -21,4 +21,8 @@ public class BaseEntity {
     public void setUpdatedBy(int updatedBy) {
         this.updatedBy = updatedBy;
     }
+
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }

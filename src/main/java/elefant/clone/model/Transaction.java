@@ -45,6 +45,10 @@ public class Transaction extends BaseEntity {
                 this.transactionPairings = transactionPairings;
         }
 
+        public Long getId(){
+                return this.id;
+        }
+
         public List<TransactionPairing> getTransactionPairings() {
                 return transactionPairings;
         }

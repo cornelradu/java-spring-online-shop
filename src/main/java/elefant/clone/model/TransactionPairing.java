@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name="transaction_pairing")
@@ -41,4 +43,5 @@ public class TransactionPairing extends BaseEntity {
     public Product getProduct() {
         return product;
     }
+
 }
