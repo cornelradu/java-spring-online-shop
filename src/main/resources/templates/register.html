@@ -1,0 +1,148 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .product {
+            cursor: pointer;
+        }
+
+        .hide_on_mobile {
+            display: block;
+        }
+
+        #large_screen_nav {
+            display: block;
+        }
+
+        #small_screen_nav {
+            display: none;
+        }
+
+        #content {
+            margin-top: 100px;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            align-items: center;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .register-form input {
+            font-size: 1.1rem;
+            padding: 1rem 0.75rem;
+        }
+
+        .register-form .form-floating label {
+            padding: 1rem 0.75rem;
+        }
+
+        .register-btn {
+            font-size: 1.1rem;
+            padding: 0.8rem;
+        }
+
+        @media screen and (max-width: 996px) {
+            .hide_on_mobile {
+                display: none;
+            }
+
+            #small_screen_nav {
+                display: block;
+            }
+
+            #large_screen_nav {
+                display: none;
+            }
+
+            #content {
+                margin-top: 80px;
+                padding: 20px;
+            }
+
+            .register-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{header :: header}"></div>
+
+<div id="content">
+    <div class="container">
+        <div class="register-container">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">Formular de inregistrare</h2>
+            </div>
+
+            <div class="alert alert-danger" role="alert"
+                 th:each="error : ${#fields.errors('person.*')}"
+                 th:text="${error}"></div>
+            <div class="alert alert-danger" role="alert"
+                 th:if="userAlreadyExistsError"
+                 th:text="'Username deja folosit'"></div>
+
+            <form th:action="@{/public/createUser}"
+                  method="post"
+                  class="register-form needs-validation"
+                  th:object="${person}">
+                <div class="card shadow mb-4">
+                    <div class="card-header bg-light py-3">
+                        <h5 class="mb-0 fw-bold">Detalii de conectare</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-4">
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="text"
+                                           class="form-control form-control-lg"
+                                           th:field="*{name}"
+                                           id="nameInput"
+                                           placeholder="Nume" />
+                                    <label for="nameInput">Nume</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="password"
+                                           class="form-control form-control-lg"
+                                           th:field="*{pwd}"
+                                           id="pwdInput"
+                                           placeholder="Parola" />
+                                    <label for="pwdInput">Parola</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="password"
+                                           class="form-control form-control-lg"
+                                           th:field="*{confirmPwd}"
+                                           id="confirmPwdInput"
+                                           placeholder="Confirma parola" />
+                                    <label for="confirmPwdInput">Confirma parola</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit"
+                            class="btn btn-primary btn-lg register-btn">
+                        Inregistreaza-te
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
