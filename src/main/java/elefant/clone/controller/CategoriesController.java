@@ -8,6 +8,7 @@ import elefant.clone.repository.PersonRepository;
 import elefant.clone.service.ProductService;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class CategoriesController {
@@ -30,6 +32,9 @@ public class CategoriesController {
     @Autowired
     PersonRepository personRepository;
 
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @RequestMapping(value={ "categories"})
     public String displayHomePage(Model model, @PathParam("category_id") String category_id, @RequestParam(required = false) String categoryId,
@@ -44,18 +49,29 @@ public class CategoriesController {
 
         model.addAttribute("prices", prices);
 
+        List<Product> products = new ArrayList<>();
+
+        String redisKey = "category_id=" + category_id + ",price=" + price+",priceId="+priceId+",categoryId="+categoryId;
+        Object value = redisTemplate.opsForValue().get(redisKey);
+        boolean foundRedis = false;
+        if (value instanceof List) {
+            products = (List<Product>) value;
+            foundRedis = true;
+        }
+
         if(categoryId != null && categoryId.equals("on")){
             model.addAttribute("categoryId", "on");
         } else {
             model.addAttribute("categoryId", "off");
         }
 
-        List<Product> products = new ArrayList<>();
-        if(category_id != null && categoryId != null && categoryId.equals("on")) {
-            model.addAttribute("category_id", Integer.parseInt(category_id));
-            products = productService.findByCategoryId(Integer.parseInt(category_id));
-        } else {
-            products = productService.findAll();
+        if(!foundRedis) {
+            if (category_id != null && categoryId != null && categoryId.equals("on")) {
+                model.addAttribute("category_id", Integer.parseInt(category_id));
+                products = productService.findByCategoryId(Integer.parseInt(category_id));
+            } else {
+                products = productService.findAll();
+            }
         }
 
         if(priceId != null && priceId.equals("on")){
@@ -66,11 +82,19 @@ public class CategoriesController {
 
         if(price != null && priceId != null && priceId.equals("on")) {
             model.addAttribute("price", price);
-            if(price.contains("-")) {
-                products = products.stream().filter(product -> product.getPrice() >= Integer.parseInt(price.split("-")[0]) && product.getPrice() <= Integer.parseInt(price.split("-")[1])).toList();
-            } else if(price.contains(">")){
-                products = products.stream().filter(product -> product.getPrice() > Integer.parseInt(price.split(">")[1])).toList();
+            if(!foundRedis) {
+                if (price.contains("-")) {
+                    products = products.stream().filter(product -> product.getPrice() >= Integer.parseInt(price.split("-")[0]) && product.getPrice() <= Integer.parseInt(price.split("-")[1])).toList();
+                } else if (price.contains(">")) {
+                    products = products.stream().filter(product -> product.getPrice() > Integer.parseInt(price.split(">")[1])).toList();
+                }
             }
+        }
+
+        if(!foundRedis){
+            redisTemplate.opsForValue().set(redisKey, products);
+            // Optional: Set expiration
+            redisTemplate.expire(redisKey, 1, TimeUnit.HOURS);
         }
 
         model.addAttribute("hide_image", true);
