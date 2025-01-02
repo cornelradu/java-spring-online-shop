@@ -1,5 +1,6 @@
 package elefant.clone.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,6 +12,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name="product")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Product extends BaseEntity{
 
     @Id

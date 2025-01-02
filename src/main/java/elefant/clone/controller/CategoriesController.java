@@ -1,5 +1,7 @@
 package elefant.clone.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import elefant.clone.model.Category;
 import elefant.clone.model.Person;
 import elefant.clone.model.Product;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -51,7 +54,7 @@ public class CategoriesController {
 
         List<Product> products = new ArrayList<>();
 
-        String redisKey = "category_id=" + category_id + ",price=" + price+",priceId="+priceId+",categoryId="+categoryId;
+        String redisKey = "category_id=" + category_id + ",price=" + price + ",priceId=" + priceId + ",categoryId=" + categoryId;
         Object value = redisTemplate.opsForValue().get(redisKey);
         boolean foundRedis = false;
         if (value instanceof List) {
@@ -59,13 +62,17 @@ public class CategoriesController {
             foundRedis = true;
         }
 
-        if(categoryId != null && categoryId.equals("on")){
+        if (categoryId != null && categoryId.equals("on")) {
             model.addAttribute("categoryId", "on");
         } else {
             model.addAttribute("categoryId", "off");
         }
 
-        if(!foundRedis) {
+        if (category_id != null && categoryId != null && categoryId.equals("on")) {
+            model.addAttribute("category_id", Integer.parseInt(category_id));
+        }
+
+        if (!foundRedis) {
             if (category_id != null && categoryId != null && categoryId.equals("on")) {
                 model.addAttribute("category_id", Integer.parseInt(category_id));
                 products = productService.findByCategoryId(Integer.parseInt(category_id));
@@ -74,15 +81,15 @@ public class CategoriesController {
             }
         }
 
-        if(priceId != null && priceId.equals("on")){
+        if (priceId != null && priceId.equals("on")) {
             model.addAttribute("priceId", "on");
         } else {
             model.addAttribute("priceId", "off");
         }
 
-        if(price != null && priceId != null && priceId.equals("on")) {
+        if (price != null && priceId != null && !priceId.equals("") && priceId.equals("on")) {
             model.addAttribute("price", price);
-            if(!foundRedis) {
+            if (!foundRedis) {
                 if (price.contains("-")) {
                     products = products.stream().filter(product -> product.getPrice() >= Integer.parseInt(price.split("-")[0]) && product.getPrice() <= Integer.parseInt(price.split("-")[1])).toList();
                 } else if (price.contains(">")) {
@@ -91,15 +98,32 @@ public class CategoriesController {
             }
         }
 
-        if(!foundRedis){
+        if (!foundRedis) {
             redisTemplate.opsForValue().set(redisKey, products);
             // Optional: Set expiration
             redisTemplate.expire(redisKey, 1, TimeUnit.HOURS);
         }
 
+        if (foundRedis) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            List<Product> newProducts = new ArrayList<>();
+            for (Object item : products) {
+                if (item instanceof LinkedHashMap) {
+                    // Convert LinkedHashMap to Product
+                    Product product = objectMapper.convertValue(item, Product.class);
+                    newProducts.add(product);
+                }
+            }
+
+            model.addAttribute("products", newProducts);
+        }
+
         model.addAttribute("hide_image", true);
         model.addAttribute("length_products", products.size());
-        model.addAttribute("products", products);
+        if (!foundRedis){
+            model.addAttribute("products", products);
+        }
         model.addAttribute("person", person);
 
         return "categories.html";
