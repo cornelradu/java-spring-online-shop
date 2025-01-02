@@ -114,19 +114,20 @@
                         <img th:src="'/images_spring/' + ${products[i*3].image}" class="img-fluid" alt="Item 1" style="width: 200px;height: 200px">
                         <p th:text="${products[i*3].getListOfAuthors()}"></p>
                         <p  th:text="${products[i*3].name}"></p>
-
+                        <p style="color:orange" th:text="${products[i*3].price}+' RON'"></p>
                     </div>
                     <div th:if="${i*3+1 < length_products}" class="col product" th:id="'/details/' + ${products[i*3+1].id}">
                         <img th:src="'/images_spring/' + ${products[i*3+1].image}" class="img-fluid" alt="Item 1" style="width: 200px;height: 200px">
                         <p th:text="${products[i*3+1].getListOfAuthors()}"></p>
                         <p  th:text="${products[i*3+1].name}"></p>
+                        <p style="color:orange" th:text="${products[i*3].price}+' RON'"></p>
 
                     </div>
                     <div th:if="${i*3+2 < length_products}" class="col product" th:id="'/details/' + ${products[i*3+2].id}">
                         <img th:src="'/images_spring/' + ${products[i*3+2].image}" class="img-fluid" alt="Item 1" style="width: 200px;height: 200px">
                         <p th:text="${products[i*3+2].getListOfAuthors()}"></p>
                         <p  th:text="${products[i*3+2].name}" ></p>
-
+                        <p style="color:orange" th:text="${products[i*3+2].price}+' RON'"></p>
                     </div>
                 </div>
 
@@ -143,6 +144,7 @@
                             <div>
                                 <p class="mb-1" th:text="${product.getListOfAuthors()}"></p>
                                 <p class="mb-0" th:text="${product.name}"></p>
+                                <p style="color:orange" th:text="${produdct?.price}+' RON'"></p>
                             </div>
                         </div>
                     </div>

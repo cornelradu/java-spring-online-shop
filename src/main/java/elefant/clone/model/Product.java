@@ -31,6 +31,7 @@ public class Product extends BaseEntity{
 
     private String image;
 
+    @JsonIgnoreProperties("product")
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<AuthorPairing> authorPairings;
 
@@ -89,5 +90,10 @@ public class Product extends BaseEntity{
 
     public PublishingHouse getPublishingHouse(){
         return publishingHouse;
+    }
+
+    @Override
+    public String toString(){
+        return name;
     }
 }

@@ -99,6 +99,7 @@
                             <img th:src="'/images_spring/' + ${randomProducts[i].image}" class="img-fluid" alt="Item 1" style="width: 300px;height: 200px">
                             <p th:text="${randomProducts[i].getListOfAuthors()}">David Mills</p>
                             <p style="max-width: 300px;" th:text="${randomProducts[i].name}"></p>
+                            <p style="color:orange" th:text="${randomProducts[i].price}+' RON'"></p>
                         </div>
                     </div>
                 </div>
@@ -110,6 +111,43 @@
                 <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#multiItemCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+        <hr/>
+
+        <p> PRODUSE VIZUALIZATE RECENT</p>
+        <div id="multiItemCarousel2" class="carousel slide" data-bs-ride="carousel">
+            <!-- Indicators/Dots -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#multiItemCarousel2" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#multiItemCarousel2" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#multiItemCarousel2" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+
+            <!-- Carousel Content -->
+            <div class="carousel-inner">
+                <div  th:class="${i == 0} ? 'carousel-item active' : 'carousel-item'" th:each="i : ${#numbers.sequence(0, 2)}" >
+                    <div class="d-flex justify-content-center">
+                        <div th:if="${#lists.size(recentlyViewedProducts)} > ${i}" th:each="i : ${#numbers.sequence(3*i, 3*i+2)}" class="col product" th:id="'/details/' + ${recentlyViewedProducts[i].id}">
+                            <img  th:src="'/images_spring/' + ${recentlyViewedProducts[i].image}" class="img-fluid" alt="Item 1" style="width: 300px;height: 200px">
+                            <p  th:text="${recentlyViewedProducts[i].getListOfAuthors()}">David Mills</p>
+                            <p  style="max-width: 300px;" th:text="${recentlyViewedProducts[i].name}"></p>
+                            <p style="color:orange" th:text="${recentlyViewedProducts[i].price}+' RON'"></p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#multiItemCarousel2" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#multiItemCarousel2" data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
