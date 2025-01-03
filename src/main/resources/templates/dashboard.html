@@ -23,11 +23,19 @@
             </div>
             <div>
                 <label for="author">Author:</label>
-                <input type="text" id="author" name="author" required>
+                <input type="text" id="author" name="author">
+            </div>
+            <div>
+                <label>Categorii</label>
+                <textarea th:text="${categories}"></textarea>
+            </div>
+            <div>
+                <label for="category">Categories:</label>
+                <input type="text" id="category" name="category" required>
             </div>
             <div>
                 <label >Publishing house:</label>
-                <input type="text" id="publishing_house" name="publishing_house" required>
+                <input type="text" id="publishing_house" name="publishing_house">
             </div>
             <div>
                 <label for="price">Price:</label>

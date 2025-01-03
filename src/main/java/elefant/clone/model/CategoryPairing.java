@@ -12,7 +12,7 @@ public class CategoryPairing extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
     @GenericGenerator(name = "native",strategy = "native")
-    private Long id;
+    private int id;
 
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id", nullable = false)
@@ -24,5 +24,17 @@ public class CategoryPairing extends BaseEntity {
 
     public Category getCategory() {
         return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class DashboardController {
@@ -45,6 +46,12 @@ public class DashboardController {
     @Autowired
     private PublishingHouseRepository publishingHouseRepository;
 
+    @Autowired
+    private CategoryPairingRepository categoryPairingRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public DashboardController(@Value("${upload_dir}") String UPLOAD_DIR) {
         this.UPLOAD_DIR = UPLOAD_DIR;
     }
@@ -58,6 +65,11 @@ public class DashboardController {
         if(!person.getRoles().getRoleName().equals("Admin")) {
             return "redirect:/home";
         }
+
+        List<Category> categories = categoryRepository.findAll();
+        String categoriesString = categories.stream().map(Category::getCategoryName).collect(Collectors.joining(","));
+        model.addAttribute("categories", categoriesString);
+        model.addAttribute("hide_image", true);
         return "dashboard.html";
     }
 
@@ -69,6 +81,7 @@ public class DashboardController {
             @RequestParam("publishing_house") String publishing_house,
             @RequestParam("price") double price,
             @RequestParam("image") MultipartFile image,
+            @RequestParam("category") String category,
             Model model) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Person person = personRepository.readByName(auth.getName());
@@ -113,10 +126,11 @@ public class DashboardController {
         Product savedProduct = productRepository.save(p);
 
         for(String authorName : author.split(",")) {
-            List<Author> foundAuthors = authorRepository.findByName(authorName);
+            String stripAuthorName = new String(authorName.trim());
+            List<Author> foundAuthors = authorRepository.findByName(stripAuthorName);
             if(foundAuthors.size()  == 0){
                 Author newAuthor = new Author();
-                newAuthor.setName(authorName);
+                newAuthor.setName(stripAuthorName);
                 newAuthor.setCreatedBy(1);
                 newAuthor.setUpdatedBy(1);
                 Author savedAuthor = authorRepository.save(newAuthor);
@@ -134,6 +148,33 @@ public class DashboardController {
                 authorPairing.setProduct(savedProduct);
                 authorPairing.setAuthor(foundAuthors.get(0));
                 authorPairingRepository.save(authorPairing);
+            }
+        }
+
+        for(String categoryName : category.split(",")) {
+            String stripCategoryName = new String(categoryName.trim());
+            List<Category> foundCategories = categoryRepository.findByCategoryName(stripCategoryName);
+            if(foundCategories.size() == 0){
+                Category newCategory = new Category();
+                newCategory.setCategoryName(stripCategoryName);
+                newCategory.setCreatedBy(1);
+                newCategory.setUpdatedBy(1);
+                Category savedCategory = categoryRepository.save(newCategory);
+
+                CategoryPairing categoryPairing = new CategoryPairing();
+                categoryPairing.setProduct(savedProduct);
+                categoryPairing.setCategory(savedCategory);
+                categoryPairing.setCreatedBy(1);
+                categoryPairing.setUpdatedBy(1);
+                categoryPairingRepository.save(categoryPairing);
+            } else{
+                Category foundCategory = foundCategories.get(0);
+                CategoryPairing categoryPairing = new CategoryPairing();
+                categoryPairing.setProduct(savedProduct);
+                categoryPairing.setCategory(foundCategory);
+                categoryPairing.setCreatedBy(1);
+                categoryPairing.setUpdatedBy(1);
+                categoryPairingRepository.save(categoryPairing);
             }
         }
 

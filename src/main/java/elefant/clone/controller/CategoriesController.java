@@ -39,9 +39,56 @@ public class CategoriesController {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    @RequestMapping(value={ "categories"})
+    @RequestMapping(value={ "/categories/carte_copii"})
+    public String displayCarteCopii(Model model) {
+        List<Category> categories = categoryRepository.findByCategoryName("Carte copii");
+        return "redirect:/categories?category_id=" + categories.get(0).getId() + "&price=&overrideCategoryId=on";
+    }
+
+    @RequestMapping(value={ "/categories/carte_straina"})
+    public String displayCarteStraina(Model model) {
+        List<Category> categories = categoryRepository.findByCategoryName("Carte straina");
+        return "redirect:/categories?category_id=" + categories.get(0).getId() + "&price=&overrideCategoryId=on";
+    }
+
+
+    @RequestMapping(value={ "/categories/carte_straina_copii"})
+    public String displayCarteStrainaCopii(Model model) {
+        List<Category> categories = categoryRepository.findByCategoryName("Carte straina copii");
+        return "redirect:/categories?category_id=" + categories.get(0).getId() + "&price=&overrideCategoryId=on";
+    }
+
+    @RequestMapping(value={ "/categories/jocuri"})
+    public String displayJocuri(Model model) {
+        List<Category> categories = categoryRepository.findByCategoryName("Jocuri");
+        return "redirect:/categories?category_id=" + categories.get(0).getId() + "&price=&overrideCategoryId=on";
+    }
+
+    @RequestMapping(value={ "/categories/jocuri_de_societate"})
+    public String displayJocuriDeSocietate(Model model) {
+        List<Category> categories = categoryRepository.findByCategoryName("Jocuri de societate");
+        return "redirect:/categories?category_id=" + categories.get(0).getId() + "&price=&overrideCategoryId=on";
+    }
+
+    @RequestMapping(value={ "/categories/lego"})
+    public String displayLEGO(Model model) {
+        List<Category> categories = categoryRepository.findByCategoryName("LEGO");
+        return "redirect:/categories?category_id=" + categories.get(0).getId() + "&price=&overrideCategoryId=on";
+    }
+
+    @RequestMapping(value={ "/categories/parfumuri"})
+    public String displayParfumuri(Model model) {
+        List<Category> categories = categoryRepository.findByCategoryName("Parfumuri");
+        return "redirect:/categories?category_id=" + categories.get(0).getId() + "&price=&overrideCategoryId=on";
+    }
+
+
+    @RequestMapping(value={ "/categories"})
     public String displayHomePage(Model model, @PathParam("category_id") String category_id, @RequestParam(required = false) String categoryId,
-                                  @PathParam("price") String price, @RequestParam(required = false) String priceId) {
+                                  @PathParam("price") String price, @RequestParam(required = false) String priceId, @PathParam("overrideCategoryId") String overrideCategoryId) {
+        if(overrideCategoryId != null){
+            categoryId = overrideCategoryId;
+        }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Person person = personRepository.readByName(auth.getName());
 

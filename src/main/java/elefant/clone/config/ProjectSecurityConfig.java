@@ -1,5 +1,6 @@
 package elefant.clone.config;
 
+import elefant.clone.model.Category;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -11,6 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Configuration
 public class ProjectSecurityConfig {
@@ -23,6 +28,13 @@ public class ProjectSecurityConfig {
 
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/categories/jocuri").permitAll()
+                        .requestMatchers("/categories/carte_straina_copii").permitAll()
+                        .requestMatchers("/categories/carte_copii").permitAll()
+                        .requestMatchers("/categories/carte_straina").permitAll()
+                        .requestMatchers("/categories/jocuri_de_societate").permitAll()
+                        .requestMatchers("/categories/lego").permitAll()
+                        .requestMatchers("/categories/parfumuri").permitAll()
                         .requestMatchers("/", "/home").permitAll()
                         .requestMatchers("/holidays/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
