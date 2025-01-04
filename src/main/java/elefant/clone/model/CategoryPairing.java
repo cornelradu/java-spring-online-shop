@@ -1,8 +1,10 @@
 package elefant.clone.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
+import elefant.clone.model.BaseEntity;
 
 @Data
 @Entity
@@ -18,6 +20,7 @@ public class CategoryPairing extends BaseEntity {
     @JoinColumn(name = "book_id", referencedColumnName = "id", nullable = false)
     private Product product; // Relationship to the Book entity
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     private Category category; // Relationship to the Author entity

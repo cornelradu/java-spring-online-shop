@@ -1,0 +1,266 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+
+</head>
+<body>
+
+<div th:replace="~{header :: header}">...</div>
+
+<div class="d-flex align-items-center justify-content-center w-100" style="margin-top:490px">
+    <div class="container" style="width: 1024px;margin-left: auto;margin-right: auto">
+        <div class="container mt-5">
+            <h2>Edit Product</h2>
+            <form th:action="@{/dashboard/products/update}" th:object="${product}" method="post" class="needs-validation" novalidate>
+                <input type="hidden" th:field="*{id}" />
+
+                <!-- Name -->
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                        Please provide a valid name.
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" th:field="*{description}" rows="3"></textarea>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">
+                        Please provide a valid description.
+                    </div>
+                </div>
+
+                <!-- Price -->
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="number" class="form-control" id="price" th:field="*{price}" step="0.01" required>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}">
+                        Please provide a valid price.
+                    </div>
+                </div>
+
+                <!-- Publishing House Selection -->
+                <div class="mb-3">
+                    <label for="publishingHouse" class="form-label">Publishing House</label>
+                    <select class="form-select" id="publishingHouse" th:field="*{publishingHouse}" required>
+                        <option value="">Select a publishing house</option>
+                        <option th:each="house : ${publishingHouses}"
+                                th:value="${house.id}"
+                                th:text="${house.name}"
+                                th:selected="${product.publishingHouse != null && product.publishingHouse.id == house.id}">
+                        </option>
+                    </select>
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('publishingHouse')}" th:errors="*{publishingHouse}">
+                        Please select a publishing house.
+                    </div>
+                </div>
+
+                <!-- Authors Multi-select -->
+                <div class="mb-3">
+                    <label class="form-label">Authors</label>
+                    <div class="authors-container">
+                        <div th:each="pairing, stat : *{authorPairings}" class="author-entry mb-2">
+                            <!-- Hidden input for existing author pairing product reference -->
+                            <input type="hidden" th:field="*{authorPairings[__${stat.index}__].product.id}" th:value="*{id}" />
+                            <select class="form-select" th:field="*{authorPairings[__${stat.index}__].author}">
+                                <option value="">Select an author</option>
+                                <option th:each="author : ${authors}"
+                                        th:value="${author.id}"
+                                        th:text="${author.name}">
+                                </option>
+                            </select>
+                            <button type="button" class="btn btn-danger" onclick="removeAuthor(this)">×</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary mt-2" onclick="addAuthorField()">Add Author</button>
+                </div>
+
+                <!-- Categories Multi-select -->
+                <div class="mb-3">
+                    <label class="form-label">Categories</label>
+                    <div class="categories-container">
+                        <div th:each="pairing, stat : *{categoryPairings}" class="category-entry mb-2">
+                            <!-- Hidden input for existing category pairing product reference -->
+                            <input type="hidden" th:field="*{categoryPairings[__${stat.index}__].product.id}" th:value="*{id}" />
+                            <select class="form-select" th:field="*{categoryPairings[__${stat.index}__].category}">
+                                <option value="">Select a category</option>
+                                <option th:each="category : ${categories}"
+                                        th:value="${category.id}"
+                                        th:text="${category.categoryName}">
+                                </option>
+                            </select>
+                            <button type="button" class="btn btn-danger" onclick="removeCategory(this)">×</button>
+
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary mt-2" onclick="addCategoryField()">Add Category</button>
+                </div>
+
+                <!-- Image URL -->
+                <div class="mb-3">
+                    <label for="image" class="form-label">Image URL</label>
+                    <input type="text" class="form-control" id="image" th:field="*{image}">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('image')}" th:errors="*{image}">
+                        Please provide a valid image URL.
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">Update Product</button>
+                <a th:href="@{/products}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+<script th:inline="javascript">
+    const authorsList = [[${authors}]];
+    const categoriesList = [[${categories}]];
+
+    // Convert the Thymeleaf objects to plain JavaScript objects
+    const authors = authorsList.map(author => ({
+        id: author.id,
+        name: author.name
+    }));
+
+    const categories = categoriesList.map(category => ({
+        id: category.id,
+        categoryName: category.categoryName
+    }));
+
+    function removeAuthor(button) {
+        const authorEntry = button.closest('.author-entry');
+        authorEntry.remove();
+
+        // Reindex remaining author fields
+        const container = document.querySelector('.authors-container');
+        const entries = container.querySelectorAll('.author-entry');
+        entries.forEach((entry, index) => {
+            const select = entry.querySelector('select');
+            const hiddenInput = entry.querySelector('input[type="hidden"]');
+
+            select.name = `authorPairings[${index}].author`;
+            select.id = `authorPairings${index}.author`;
+
+            hiddenInput.name = `authorPairings[${index}].product`;
+            hiddenInput.id = `authorPairings${index}.product`;
+        });
+    }
+
+    function removeCategory(button) {
+        const categoryEntry = button.closest('.category-entry');
+        categoryEntry.remove();
+
+        // Reindex remaining category fields
+        const container = document.querySelector('.categories-container');
+        const entries = container.querySelectorAll('.category-entry');
+        entries.forEach((entry, index) => {
+            const select = entry.querySelector('select');
+            const hiddenInput = entry.querySelector('input[type="hidden"]');
+
+            select.name = `categoryPairings[${index}].category`;
+            select.id = `categoryPairings${index}.category`;
+
+            hiddenInput.name = `categoryPairings[${index}].product`;
+            hiddenInput.id = `categoryPairings${index}.product`;
+        });
+    }
+
+    // Add dynamic author field
+    function addAuthorField() {
+        const container = document.querySelector('.authors-container');
+        const index = container.children.length;
+        const div = document.createElement('div');
+        div.className = 'author-entry mb-2';
+
+        const select = document.createElement('select');
+        select.className = 'form-select';
+        select.name = `authorPairings[${index}].author`;
+        select.id = `authorPairings${index}.author`;
+
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = `authorPairings[${index}].product`;
+        hiddenInput.id = `authorPairings${index}.product`;
+        hiddenInput.value = document.querySelector('input[name="id"]').value;
+
+
+        // Add default option
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select an author';
+        select.appendChild(defaultOption);
+
+        // Add author options
+        authors.forEach(author => {
+            const option = document.createElement('option');
+            option.value = author.id;
+            option.textContent = author.name;
+            select.appendChild(option);
+        });
+
+        div.appendChild(hiddenInput);
+        div.appendChild(select);
+        container.appendChild(div);
+    }
+
+    // Add dynamic category field
+    function addCategoryField() {
+        const container = document.querySelector('.categories-container');
+        const index = container.children.length;
+        const div = document.createElement('div');
+        div.className = 'category-entry mb-2';
+
+        const select = document.createElement('select');
+        select.className = 'form-select';
+        select.name = `categoryPairings[${index}].category`;
+        select.id = `categoryPairings${index}.category`;
+
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = `categoryPairings[${index}].product`;
+        hiddenInput.id = `categoryPairings${index}.product`;
+        hiddenInput.value = document.querySelector('input[name="id"]').value;
+
+
+        // Add default option
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select a category';
+        select.appendChild(defaultOption);
+
+        // Add category options
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.categoryName;
+            select.appendChild(option);
+        });
+
+        div.appendChild(hiddenInput);
+        div.appendChild(select);
+        container.appendChild(div);
+        container.insertAdjacentHTML('beforeend', template);
+    }
+
+    // Form validation
+    (function () {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

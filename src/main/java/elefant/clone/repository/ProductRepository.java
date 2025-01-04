@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends CrudRepository<Product, Integer> {
     @Query(value = "SELECT p FROM Product p ORDER BY RAND()")
@@ -16,4 +17,7 @@ public interface ProductRepository extends CrudRepository<Product, Integer> {
     List<Product>   findByCategoryId(Integer categoryId);
 
     List<Product> findAll();
+
+    Optional<Product> findFirstByNameContainingIgnoreCase(String name);
+
 }

@@ -1,7 +1,0 @@
-package elefant.clone.repository;
-
-import elefant.clone.model.Category;
-import org.springframework.data.repository.CrudRepository;
-
-public interface AuthorRepository  extends CrudRepository<Category, Integer> {
-}
