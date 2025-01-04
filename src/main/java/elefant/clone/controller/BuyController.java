@@ -46,7 +46,7 @@ public class BuyController {
         t.setUpdatedBy(1);
         transactionRepository.save(t);
 
-        List<Integer> productIds = new ArrayList<>();
+        List<Long> productIds = new ArrayList<>();
         for(PurchaseCartProductPairing pairing : purchaseCart.getProductPairings()) {
             TransactionPairing tp = new TransactionPairing();
             tp.setProduct(pairing.getProduct());
@@ -56,7 +56,7 @@ public class BuyController {
             tp.setCreatedAt(LocalDateTime.now());
             transactionPairingRepository.save(tp);
 
-            productIds.add((int)pairing.getProduct().getId());
+            productIds.add(pairing.getProduct().getId());
         }
 
         for(var prodId : productIds) {

@@ -62,7 +62,7 @@ public class Product extends BaseEntity{
         return authorPairings;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -91,6 +91,20 @@ public class Product extends BaseEntity{
     public PublishingHouse getPublishingHouse(){
         return publishingHouse;
     }
+
+    public void setAuthorPairings(List<AuthorPairing> authorPairings){
+        this.authorPairings = authorPairings;
+    }
+
+    public void setCategoryPairings(List<CategoryPairing> categoryPairings){
+        this.categoryPairings = categoryPairings;
+    }
+
+    public List<CategoryPairing> getCategoryPairings(){
+        return categoryPairings;
+    }
+
+    public void setId(Long id) { this.id = id; }
 
     @Override
     public String toString(){

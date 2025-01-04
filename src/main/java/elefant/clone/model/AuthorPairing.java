@@ -35,4 +35,8 @@ public class AuthorPairing extends BaseEntity {
     public void setProduct(Product product) {
         this.product = product;
     }
+
+    public Product getProduct() {
+        return product;
+    }
 }

@@ -46,13 +46,10 @@ public class DashboardEditProductController  {
 
     @PostMapping("/dashboard/products/update")
     @Transactional
-    public String updateProduct(@Valid @ModelAttribute Product product, BindingResult result) {
+    public String updateProduct(@Valid @ModelAttribute("product") Product product, BindingResult result) {
         if (result.hasErrors()) {
             return "dashboard_edit.html";
         }
-
-        Product existingProduct = productRepository.findById((int)product.getId())
-                .orElseThrow(() -> new RuntimeException("Product not found"));
 
         // Clear existing author pairings
         authorPairingRepository.deleteByProductId(product.getId());

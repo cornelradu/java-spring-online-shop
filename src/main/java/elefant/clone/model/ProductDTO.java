@@ -1,14 +1,14 @@
 package elefant.clone.model;
 
 public class ProductDTO {
-    private int id;
+    private long id;
     private String name;
     private String description;
     private float price;
     private String image;
     private String listOfAuthors;
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -24,7 +24,7 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 

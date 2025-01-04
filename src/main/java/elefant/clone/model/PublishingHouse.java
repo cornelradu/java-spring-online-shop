@@ -14,11 +14,15 @@ public class PublishingHouse extends BaseEntity{
     @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
     @GenericGenerator(name = "native",strategy = "native")
     @Column(name = "id")
-    private Long id;
+    private int id;
 
     private String name;
 
     public void setName(String name) { this.name = name; }
 
     public String getName() { return name; }
+
+    public int getId() { return id; }
+
+    public void setId(int id) { this.id = id; }
 }

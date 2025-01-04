@@ -14,7 +14,7 @@ public class Author extends BaseEntity {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
     @GenericGenerator(name = "native",strategy = "native")
-    private Long id;
+    private int id;
 
     private String name;
 
@@ -26,4 +26,11 @@ public class Author extends BaseEntity {
         this.name = name;
     }
 
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
 }

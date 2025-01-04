@@ -14,8 +14,7 @@
         <div class="container mt-5">
             <h2>Edit Product</h2>
             <form th:action="@{/dashboard/products/update}" th:object="${product}" method="post" class="needs-validation" novalidate>
-                <input type="hidden" th:field="*{id}" />
-
+                <input type="hidden" th:field="*{id}" th:value="${id}" />
                 <!-- Name -->
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
@@ -65,7 +64,7 @@
                     <div class="authors-container">
                         <div th:each="pairing, stat : *{authorPairings}" class="author-entry mb-2">
                             <!-- Hidden input for existing author pairing product reference -->
-                            <input type="hidden" th:field="*{authorPairings[__${stat.index}__].product.id}" th:value="*{id}" />
+                            <input type="hidden" th:field="*{authorPairings[__${stat.index}__].product}" />
                             <select class="form-select" th:field="*{authorPairings[__${stat.index}__].author}">
                                 <option value="">Select an author</option>
                                 <option th:each="author : ${authors}"
@@ -85,7 +84,7 @@
                     <div class="categories-container">
                         <div th:each="pairing, stat : *{categoryPairings}" class="category-entry mb-2">
                             <!-- Hidden input for existing category pairing product reference -->
-                            <input type="hidden" th:field="*{categoryPairings[__${stat.index}__].product.id}" th:value="*{id}" />
+                            <input type="hidden" th:field="*{categoryPairings[__${stat.index}__].product}"  />
                             <select class="form-select" th:field="*{categoryPairings[__${stat.index}__].category}">
                                 <option value="">Select a category</option>
                                 <option th:each="category : ${categories}"
@@ -111,7 +110,7 @@
 
                 <!-- Submit Button -->
                 <button type="submit" class="btn btn-primary">Update Product</button>
-                <a th:href="@{/products}" class="btn btn-secondary">Cancel</a>
+                <a th:href="@{/dashboard}" class="btn btn-secondary">Cancel</a>
         </div>
     </div>
 </div>

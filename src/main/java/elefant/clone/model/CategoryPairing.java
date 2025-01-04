@@ -40,4 +40,8 @@ public class CategoryPairing extends BaseEntity {
     public void setProduct(Product product) {
         this.product = product;
     }
+
+    public void setId(int id) { this.id = id; }
+
+    public int getId() { return id; }
 }
