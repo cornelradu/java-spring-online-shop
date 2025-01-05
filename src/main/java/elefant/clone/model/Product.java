@@ -1,10 +1,12 @@
 package elefant.clone.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -13,8 +15,8 @@ import java.util.Set;
 @Entity
 @Table(name="product")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Product extends BaseEntity{
-
+public class Product extends BaseEntity implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO,generator="native")
     @GenericGenerator(name = "native",strategy = "native")
@@ -38,6 +40,13 @@ public class Product extends BaseEntity{
     @JsonIgnoreProperties("product")
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<CategoryPairing> categoryPairings;
+
+    @JsonManagedReference
+    @JsonIgnoreProperties("product")
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    private List<Vote> votes;
+
 
     private float price;
 
@@ -105,6 +114,17 @@ public class Product extends BaseEntity{
     }
 
     public void setId(Long id) { this.id = id; }
+
+    public float getAverageRating(){
+        float rating = 0;
+        for(Vote vote : votes){
+            rating += vote.getRating();
+        }
+        if(votes.size() == 0){
+            return 0;
+        }
+        return rating/votes.size();
+    }
 
     @Override
     public String toString(){

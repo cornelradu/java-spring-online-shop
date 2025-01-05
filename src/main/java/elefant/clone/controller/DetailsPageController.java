@@ -1,6 +1,7 @@
 package elefant.clone.controller;
 
 import elefant.clone.model.Person;
+import elefant.clone.repository.PersonRepository;
 import elefant.clone.repository.ProductRepository;
 import elefant.clone.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,12 +23,17 @@ public class DetailsPageController {
     ProductRepository productRepository;
 
     @Autowired
+    private PersonRepository personRepository;
+
+    @Autowired
     private CookieUtil cookieUtil;
 
     @RequestMapping(value={"/details/{product_id}"})
     public String displayHomePage(Model model, @PathVariable int product_id, HttpServletRequest request,
                                   HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Person person = personRepository.readByName(auth.getName());
+        model.addAttribute("person", person);
         model.addAttribute("hide_image", true);
         productRepository.findById(product_id).ifPresent(product -> model.addAttribute("product", product));
 

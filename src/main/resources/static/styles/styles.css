@@ -1,0 +1,78 @@
+
+ .rating-container {
+     display: inline-flex;
+     flex-direction: row-reverse;  /* Reverses the order for proper fill direction */
+     justify-content: flex-end;
+ }
+
+.rating-container input {
+    display: none;
+}
+
+.rating-container label {
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: #ddd;
+    transition: color 0.2s ease;
+}
+
+/* Base state - empty stars */
+.rating-container label:before {
+    content: '★';
+    position: absolute;
+}
+
+/* Hover effect */
+.rating-container label:hover,
+.rating-container label:hover ~ label {
+    color: #ffd700 !important;
+}
+
+/* Selected state */
+.rating-container input:checked ~ label {
+    color: #ffd700;
+}
+
+/* Product card styling */
+.product-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin: 15px;
+    border-radius: 8px;
+    max-width: 300px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.current-rating {
+    font-size: 14px;
+    margin: 10px 0;
+    color: #666;
+}
+
+.submit-button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
+/* Add spacing between rating form elements */
+.rating-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}

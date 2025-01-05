@@ -60,6 +60,11 @@ public class ProductService {
         dto.setPrice(product.getPrice());
         dto.setImage(product.getImage());
         dto.setListOfAuthors(product.getListOfAuthors());
+        dto.setAverageRating(product.getAverageRating());
         return dto;
+    }
+
+    public Product findById(int id) {
+        return this.productRepository.findById(id).get();
     }
 }

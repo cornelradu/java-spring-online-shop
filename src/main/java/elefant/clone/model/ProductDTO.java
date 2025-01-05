@@ -7,6 +7,11 @@ public class ProductDTO {
     private float price;
     private String image;
     private String listOfAuthors;
+    private float averageRating;
+
+    public void setAverageRating(float averageRating) { this.averageRating = averageRating; }
+
+    public float getAverageRating() { return averageRating; }
 
     public void setId(long id) {
         this.id = id;

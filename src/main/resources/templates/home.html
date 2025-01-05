@@ -1,4 +1,4 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -202,8 +202,77 @@
             }
         }
     </style>
-    <link href="/images/styles.css" rel="stylesheet">
+    <style>
 
+        .rating {
+            display: inline-block;
+            direction: rtl;
+            unicode-bidi: bidi-override;
+            position: relative;
+            z-index: 100;
+            pointer-events: auto;
+        }
+
+        .rating label {
+            display: inline-block;
+            padding: 0 2px;
+            font-size: 30px;
+            color: #ddd;
+            cursor: pointer;
+            position: relative;
+            z-index: 101;
+        }
+
+
+        .rating input {
+            display: none;
+        }
+
+
+        /* Filled star color */
+        .rating input:checked ~ label,
+        .rating:not(:checked) label:hover,
+        .rating:not(:checked) label:hover ~ label {
+            color: #ffd700;  /* Gold color for filled stars */
+        }
+
+        /* Reset hover effects once rating is selected */
+        .rating input:checked + label:hover,
+        .rating input:checked ~ label:hover,
+        .rating label:hover ~ input:checked ~ label,
+        .rating input:checked ~ label:hover ~ label {
+            color: #ffed4a;  /* Lighter gold for hover over selected */
+        }
+
+        .product-card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 15px;
+            border-radius: 8px;
+            max-width: 300px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .current-rating {
+            font-size: 14px;
+            margin: 10px 0;
+            color: #666;
+        }
+
+        .submit-button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
 
@@ -228,14 +297,38 @@
                             <div class="d-flex justify-content-center">
                                 <div th:if="${#lists.size(randomProducts)} > ${i}" th:each="i : ${#numbers.sequence(3*i, 3*i+2)}"
                                      class="col px-2">
-                                    <div class="product product-card shadow-sm" th:id="'/details/' + ${randomProducts[i].id}">
+                                    <div class=" product-card shadow-sm" >
                                         <img th:src="'/images_spring/' + ${randomProducts[i].image}"
-                                             class="product-image w-100"
-                                             th:alt="${randomProducts[i].name}">
+                                             class="product-image w-100 product"
+                                             th:alt="${randomProducts[i].name}" th:id="'/details/' + ${randomProducts[i].id}">
                                         <div class="product-details">
                                             <p class="product-author" th:text="${randomProducts[i].getListOfAuthors()}"></p>
                                             <h3 class="product-title" th:text="${randomProducts[i].name}"></h3>
                                             <p class="product-price" th:text="${randomProducts[i].price} + ' RON'"></p>
+                                            <form th:action="@{/product/rate}" method="POST" class="rating-form">
+                                                <input type="hidden" name="productId" th:value="${randomProducts[i].id}" />
+                                                <div class="rating" th:data-product-id="${randomProducts[i].id}"
+                                                     th:data-person-id="${person != null ?person.id : 0}">
+                                                    <!-- Stars in reverse order for proper fill effect -->
+                                                    <input type="radio" th:id="'star5-' + ${randomProducts[i].id}" name="rating" value="5" />
+                                                    <label for="star5" title="5 stars">☆</label>
+
+                                                    <input type="radio" th:id="'star4-' + ${randomProducts[i].id}" name="rating" value="4" />
+                                                    <label for="star4" title="4 stars">☆</label>
+
+                                                    <input type="radio" th:id="'star3-' + ${randomProducts[i].id}" name="rating" value="3" />
+                                                    <label for="star3" title="3 stars">☆</label>
+
+                                                    <input type="radio" th:id="'star2-' + ${randomProducts[i].id}" name="rating" value="2" />
+                                                    <label for="star2" title="2 stars">☆</label>
+
+                                                    <input type="radio" th:id="'star1-' + ${randomProducts[i].id}" name="rating" value="1" />
+                                                    <label for="star1" title="1 star">☆</label>
+
+                                                    <p class="product-rating" th:data-product-id="${randomProducts[i].id}" th:text="${randomProducts[i].getAverageRating()} + '/5'"></p>
+
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -271,14 +364,37 @@
                                 <div th:if="${#lists.size(recentlyViewedProducts)} > ${i}"
                                      th:each="i : ${#numbers.sequence(3*i, 3*i+2)}"
                                      class="col px-2">
-                                    <div class="product product-card shadow-sm" th:id="'/details/' + ${recentlyViewedProducts[i].id}">
+                                    <div class="product product-card shadow-sm">
                                         <img th:src="'/images_spring/' + ${recentlyViewedProducts[i].image}"
-                                             class="product-image w-100"
-                                             th:alt="${recentlyViewedProducts[i].name}">
+                                             class="product-image w-100 product"
+                                             th:alt="${recentlyViewedProducts[i].name}"  th:id="'/details/' + ${recentlyViewedProducts[i].id}">
                                         <div class="product-details">
                                             <p class="product-author" th:text="${recentlyViewedProducts[i].getListOfAuthors()}"></p>
                                             <h3 class="product-title" th:text="${recentlyViewedProducts[i].name}"></h3>
                                             <p class="product-price" th:text="${recentlyViewedProducts[i].price} + ' RON'"></p>
+                                            <form th:action="@{/product/rate}" method="POST" class="rating-form">
+                                                <input type="hidden" name="productId" th:value="${recentlyViewedProducts[i].id}" />
+                                                <div class="rating" th:data-product-id="${recentlyViewedProducts[i].id}"
+                                                     th:data-person-id="${person != null ?person.id : 0}">
+                                                    <!-- Stars in reverse order for proper fill effect -->
+                                                    <input type="radio" th:id="'recently-star5-' + ${recentlyViewedProducts[i].id}" name="rating" value="5" />
+                                                    <label for="star5" title="5 stars">☆</label>
+
+                                                    <input type="radio" th:id="'recently-star4-' + ${recentlyViewedProducts[i].id}" name="rating" value="4" />
+                                                    <label for="star4" title="4 stars">☆</label>
+
+                                                    <input type="radio" th:id="'recently-star3-' + ${recentlyViewedProducts[i].id}" name="rating" value="3" />
+                                                    <label for="star3" title="3 stars">☆</label>
+
+                                                    <input type="radio" th:id="'recently-star2-' + ${recentlyViewedProducts[i].id}" name="rating" value="2" />
+                                                    <label for="star2" title="2 stars">☆</label>
+
+                                                    <input type="radio" th:id="'recently-star1-' + ${recentlyViewedProducts[i].id}" name="rating" value="1" />
+                                                    <label for="star1" title="1 star">☆</label>
+
+                                                    <p class="product-rating" th:data-product-id="${recentlyViewedProducts[i].id}" th:text="${recentlyViewedProducts[i].getAverageRating()} + '/5'"></p>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
@@ -326,6 +442,64 @@
 
     // Run on page load
     document.addEventListener('DOMContentLoaded', handleScreenSizeClass);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Prevent rating clicks from triggering carousel
+        const ratingContainers = document.querySelectorAll('.rating');
+        ratingContainers.forEach(container => {
+            container.addEventListener('click', function (e) {
+                e.stopPropagation();  // Stop event from bubbling up to carousel
+            });
+        });
+
+        // Prevent form submission from triggering carousel
+        const ratingForms = document.querySelectorAll('.rating-form');
+        ratingForms.forEach(form => {
+            form.addEventListener('click', function (e) {
+                e.stopPropagation();  // Stop event from bubbling up to carousel
+            });
+        })
+    });
+
+
+    $('.rating label').on('click', function(e) {
+        e.stopPropagation();
+
+        const input = $(this).prev('input[type="radio"]');
+        const rating = input.val();
+        const ratingContainer = $(this).closest('.rating');
+        const productId = ratingContainer.data('product-id');
+        const personId = ratingContainer.data('person-id');
+        console.log(productId)
+
+        // Send AJAX request
+        $.ajax({
+            url: `/vote/${productId}/${personId}/${rating}`,
+            method: 'GET',
+            success: function(response) {
+                // Handle success
+                if(response.success) {
+                    // You can show a success message
+
+                    $.ajax({
+                        url: `/rating/${productId}`,
+                        method: 'GET',
+                        success: function(response) {
+                            $('.product-rating[data-product-id="' + productId + '"]').text(response.rating + '/5');
+
+                        }});
+
+                } else {
+                }
+            },
+            error: function(xhr, status, error) {
+                if (xhr.status === 403 || xhr.status == 401) {
+                    // Redirect to login page
+                    window.location.href = '/login';
+                }
+            }
+        });
+    });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

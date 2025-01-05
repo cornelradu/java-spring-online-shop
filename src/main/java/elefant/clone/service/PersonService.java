@@ -1,6 +1,7 @@
 package elefant.clone.service;
 
 import elefant.clone.model.Person;
+import elefant.clone.model.Product;
 import elefant.clone.model.Roles;
 import elefant.clone.repository.PersonRepository;
 import elefant.clone.repository.RolesRepository;
@@ -42,6 +43,10 @@ public class PersonService {
             isSaved = true;
         }
         return isSaved;
+    }
+
+    public Person findById(int id) {
+        return this.personRepository.findById(id).get();
     }
 }
 

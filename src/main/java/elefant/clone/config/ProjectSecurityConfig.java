@@ -27,7 +27,7 @@ public class ProjectSecurityConfig {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
 
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/images/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/images/**", "/styles/**", "/js/**").permitAll()
                         .requestMatchers("/categories/jocuri").permitAll()
                         .requestMatchers("/categories/carte_straina_copii").permitAll()
                         .requestMatchers("/categories/carte_copii").permitAll()
@@ -42,7 +42,8 @@ public class ProjectSecurityConfig {
                         .requestMatchers("/dashboard/categories").authenticated()
                         .requestMatchers("/dashboard/categories/add").authenticated()
                         .requestMatchers("/dashboard/categories/delete/**").authenticated()
-
+                        .requestMatchers("/vote/**").authenticated()
+                        .requestMatchers("/rating/**").permitAll()
                         .requestMatchers("/", "/home").permitAll()
                         .requestMatchers("/holidays/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
