@@ -21,7 +21,7 @@ public class Vote extends BaseEntity implements Serializable {
     @JoinColumn(name = "person_id")
     private Person person;
 
-    @JsonBackReference
+    @JsonBackReference("product-votes")
 
     @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)

@@ -37,11 +37,13 @@ public class Product extends BaseEntity implements Serializable {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<AuthorPairing> authorPairings;
 
+    @JsonManagedReference("product-category-pairings")
+
     @JsonIgnoreProperties("product")
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<CategoryPairing> categoryPairings;
 
-    @JsonManagedReference
+    @JsonManagedReference("product-votes")
     @JsonIgnoreProperties("product")
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
@@ -127,7 +129,7 @@ public class Product extends BaseEntity implements Serializable {
     }
 
     @Override
-    public String toString(){
-        return name;
+    public String toString() {
+        return "Product{id=" + getId() + ", name='" + getName() + "'}";
     }
 }

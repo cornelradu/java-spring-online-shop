@@ -46,4 +46,8 @@ public class Category extends BaseEntity {
         this.categoryPairings = categoryPairings;
     }
 
+    @Override
+    public String toString() {
+        return "Category{id=" + getId() + ", name='" + getCategoryName() + "'}";
+    }
 }

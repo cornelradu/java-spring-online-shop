@@ -16,11 +16,14 @@ public class CategoryPairing extends BaseEntity {
     @GenericGenerator(name = "native",strategy = "native")
     private int id;
 
+    @JsonBackReference("product-category-pairings")
+
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id", nullable = false)
     private Product product; // Relationship to the Book entity
 
     @JsonBackReference
+
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     private Category category; // Relationship to the Author entity
@@ -44,4 +47,9 @@ public class CategoryPairing extends BaseEntity {
     public void setId(int id) { this.id = id; }
 
     public int getId() { return id; }
+
+    @Override
+    public String toString() {
+        return "CategoryPairing{id=" + getId() + ", category=" + (category != null ? category.getCategoryName() : "null") + "}";
+    }
 }
