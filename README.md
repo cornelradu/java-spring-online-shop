@@ -2,5 +2,5 @@
 
 Project online at: http://157.230.109.0:8080/
 
-Username: cornel
-Password: 12346
+Username: cornel9
+Password: parola
